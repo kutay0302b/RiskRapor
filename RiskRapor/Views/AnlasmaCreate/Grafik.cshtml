@@ -1,40 +1,72 @@
 ﻿@{
-    ViewData["Title"] = "Risk Skoru Grafiği";
+    ViewData["Title"] = "Risk Analizi ve Grafikler";
 }
 
 <div class="container mt-5">
-    <h2 class="text-center mb-4">Anlaşmaların Risk Skoru Grafiği</h2>
+    <h2 class="text-center mb-4">Risk Türlerine Göre Dağılım</h2>
+    <canvas id="riskTuruChart" style="max-width: 300px; max-height: 300px;"></canvas>
 
-    <canvas id="riskChart" width="400" height="200"></canvas>
+    <h2 class="text-center mb-4">Risk Skorlarının Zaman İçinde Dağılımı</h2>
+    <canvas id="riskSkoruChart" style="width: 400px; max-height: 300px;"></canvas>
 
     <script>
-        fetch('/AnlasmaCreate/GrafikVerisi') 
+        fetch('/AnlasmaCreate/RiskTuruGrafik')
             .then(response => response.json())
             .then(data => {
-                const labels = data.map(anlasma => anlasma.firmaAdi);
-                const riskSkorlari = data.map(anlasma => anlasma.riskSkoru);
+                const labels = data.map(d => d.riskTuru);
+                const values = data.map(d => d.anlasmaSayisi);
 
-                const ctx = document.getElementById('riskChart').getContext('2d');
-                const riskChart = new Chart(ctx, {
-                    type: 'bar', 
+                const ctx = document.getElementById('riskTuruChart').getContext('2d');
+                const riskTuruChart = new Chart(ctx, {
+                    type: 'pie',
                     data: {
-                        labels: labels, // Firma adları
+                        labels: labels,
                         datasets: [{
-                            label: 'Risk Skoru',
-                            data: riskSkorlari, // Risk skorları
-                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                            borderColor: 'rgba(54, 162, 235, 1)',
-                            borderWidth: 1
+                            label: 'Anlaşma Sayısı',
+                            data: values,
+                            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+                            hoverOffset: 4
                         }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
                     }
                 });
             });
+
+
+        fetch('/AnlasmaCreate/RiskSkoruGrafik')
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);  
+                data.forEach(d => console.log(d.anlasmaTarihi));  
+
+                const labels = data.map(d => {
+                    let date = new Date(d.anlasmaTarihi);
+                    return date.toLocaleDateString(); 
+                });
+
+                const values = data.map(d => d.ortalamaRiskSkoru); 
+
+                const ctx = document.getElementById('riskSkoruChart').getContext('2d');
+                const riskSkoruChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Ortalama Risk Skoru',
+                            data: values,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            fill: true
+                        }]
+                    }
+                });
+            });
+
+
+
+
+
+
+
+
     </script>
 </div>

@@ -26,6 +26,10 @@ namespace RiskRapor.Controllers
             var anlasmalar = await _context.Anlasmalar.ToListAsync();
             return View(anlasmalar); 
         }
+        public IActionResult Grafik()
+        {
+            return View();
+        }
 
         public async Task<IActionResult> GrafikVerisi()
         {
@@ -37,11 +41,38 @@ namespace RiskRapor.Controllers
             return Json(riskVerileri);
         }
 
-
-        public IActionResult Grafik()
+        public async Task<IActionResult> RiskTuruGrafik()
         {
-            return View();
+            var riskTuruVerileri = await _context.Anlasmalar
+                .GroupBy(a => a.RiskTuru)
+                .Select(g => new
+                {
+                    RiskTuru = g.Key,
+                    AnlasmaSayisi = g.Count()
+                }).ToListAsync();
+
+            return Json(riskTuruVerileri);
         }
+
+        public async Task<IActionResult> RiskSkoruGrafik()
+        {
+            var riskSkoruVerileri = await _context.Anlasmalar
+                .GroupBy(a => a.AnlasmaTarihi)
+                .Select(g => new
+                {
+                    AnlasmaTarihi = g.Key,
+                    OrtalamaRiskSkoru = g.Average(a => a.RiskSkoru)
+                }).ToListAsync();
+
+            return Json(riskSkoruVerileri);
+        }
+
+
+
+
+
+
+      
 
         // POST: AnlasmaCreate/Create (Yeni Anlaşma Veritabanına Kaydedilir)
         [HttpPost]
