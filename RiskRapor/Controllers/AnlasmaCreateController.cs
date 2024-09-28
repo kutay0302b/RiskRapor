@@ -38,10 +38,10 @@ namespace RiskRapor.Controllers
                 var maliBilgi = new MaliBilgiler
                 {
                     AnlasmaId = anlasma.AnlasmaId,
-                    Gelir = GetRandomDecimal(50000, 150000),   
-                    Gider = GetRandomDecimal(20000, 100000), 
-                    Kar = GetRandomDecimal(10000, 50000), 
-                    VergiOrani = GetRandomDecimal(15, 25) 
+                    Gelir = GetRandomDecimal(50000, 150000),
+                    Gider = GetRandomDecimal(20000, 100000),
+                    Kar = GetRandomDecimal(10000, 50000),
+                    VergiOrani = GetRandomDecimal(15, 25)
                 };
 
                 _context.MaliBilgiler.Add(maliBilgi);
@@ -52,7 +52,7 @@ namespace RiskRapor.Controllers
             return View(anlasma);
         }
 
-       
+
         private decimal GetRandomDecimal(decimal minValue, decimal maxValue)
         {
             Random random = new Random();
@@ -62,8 +62,10 @@ namespace RiskRapor.Controllers
 
         public async Task<IActionResult> RiskAnalizi()
         {
-            var anlasmalar = await _context.Anlasmalar.ToListAsync();
-            return View(anlasmalar); 
+            // Track etmeyi durdurarak hafıza yükünü azaltma işlemi için AsNoTracking eklendi
+            var anlasmalar = await _context.Anlasmalar.AsNoTracking().ToListAsync();
+
+            return View(anlasmalar);
         }
         public IActionResult Grafik()
         {
@@ -72,7 +74,8 @@ namespace RiskRapor.Controllers
 
         public async Task<IActionResult> GrafikVerisi()
         {
-            var anlasmalar = await _context.Anlasmalar.ToListAsync();
+            // Track etmeyi durdurarak hafıza yükünü azaltma işlemi için AsNoTracking eklendi
+            var anlasmalar = await _context.Anlasmalar.AsNoTracking().ToListAsync();
 
             //  firma adı ve risk skorlarını JSON'a çevir 
             var riskVerileri = anlasmalar.Select(a => new { a.FirmaAdi, a.RiskSkoru }).ToList();
@@ -111,7 +114,7 @@ namespace RiskRapor.Controllers
 
 
 
-      
+
 
         //// POST: AnlasmaCreate/Create (Yeni Anlaşma Veritabanına Kaydedilir)
         //[HttpPost]

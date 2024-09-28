@@ -9,7 +9,7 @@ namespace RiskRapor.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ApplicationDbContext _context;  // Veritabanı bağlantısı için DbContext
+        private readonly ApplicationDbContext _context;
 
         public HomeController(ApplicationDbContext context)
         {
@@ -18,10 +18,9 @@ namespace RiskRapor.Controllers
 
         public async Task<IActionResult> Index()
         {
-            // Veritabanından anlaşmalar listesini çekiyoruz
-            var anlasmalar = await _context.Anlasmalar.ToListAsync();
+            // Track etmeyi durdurarak hafıza yükünü azaltma işlemi için AsNoTracking eklendi
+            var anlasmalar = await _context.Anlasmalar.AsNoTracking().ToListAsync();
 
-            // Listeyi view'e model olarak aktarıyoruz
             return View(anlasmalar);
         }
 
