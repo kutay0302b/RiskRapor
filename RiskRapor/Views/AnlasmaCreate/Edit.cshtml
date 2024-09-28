@@ -1,0 +1,36 @@
+﻿@model RiskRapor.Models.Anlasmalar
+
+@{
+    ViewData["Title"] = "Anlaşma Düzenle";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Anlaşma Düzenle</h2>
+
+    <!-- Gizli input ile AnlasmaId'yi gönderiyoruz -->
+    <form asp-action="Edit" method="post" class="row g-3">
+        <input type="hidden" asp-for="AnlasmaId" />
+
+        <div class="col-md-6">
+            <label for="FirmaAdi" class="form-label">Firma Adı</label>
+            <input type="text" class="form-control" id="FirmaAdi" name="FirmaAdi" value="@Model.FirmaAdi" required>
+        </div>
+        <div class="col-md-6">
+            <label for="AnlasmaTarihi" class="form-label">Anlaşma Tarihi</label>
+            <input type="date" class="form-control" id="AnlasmaTarihi" name="AnlasmaTarihi" value="@Model.AnlasmaTarihi.ToString("yyyy-MM-dd")" required>
+        </div>
+        <div class="col-md-6">
+            <label for="RiskTuru" class="form-label">Risk Türü</label>
+            <input type="text" class="form-control" id="RiskTuru" name="RiskTuru" value="@Model.RiskTuru" required>
+        </div>
+        <div class="col-md-6">
+            <label for="RiskDegeri" class="form-label">Risk Değeri</label>
+            <input type="number" class="form-control" id="RiskDegeri" name="RiskDegeri" value="@Model.RiskDegeri" step="0.01" required>
+        </div>
+
+        <div class="col-12 text-center">
+            <button type="submit" class="btn btn-success">Kaydet</button>
+            <a href="/Home/Index" class="btn btn-secondary ms-2">İptal</a>
+        </div>
+    </form>
+</div>

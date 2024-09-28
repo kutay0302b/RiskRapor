@@ -1,0 +1,27 @@
+﻿@model RiskRapor.Models.Anlasmalar
+
+@{
+    ViewData["Title"] = "Anlaşma Sil";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Anlaşmayı Sil</h2>
+
+    <div class="alert alert-warning" role="alert">
+        <h4 class="alert-heading">Dikkat!</h4>
+        <p>Bu anlaşmayı silmek üzeresiniz. Bu işlem geri alınamaz. Silmek istediğinize emin misiniz?</p>
+    </div>
+
+    <div class="mb-3">
+        <strong>Firma Adı:</strong> @Model.FirmaAdi <br />
+        <strong>Anlaşma Tarihi:</strong> @Model.AnlasmaTarihi.ToShortDateString() <br />
+        <strong>Risk Türü:</strong> @Model.RiskTuru <br />
+        <strong>Risk Değeri:</strong> @Model.RiskDegeri
+    </div>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="AnlasmaId" />
+        <button type="submit" class="btn btn-danger">Sil</button>
+        <a href="/AnlasmaCreate/Index" class="btn btn-secondary ms-2">İptal</a>
+    </form>
+</div>

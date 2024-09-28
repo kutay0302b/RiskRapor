@@ -1,21 +1,28 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RiskRapor.Models;
+using RiskRapor.Data;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace RiskRapor.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;  // Veritabanı bağlantısı için DbContext
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ApplicationDbContext context)
         {
-            _logger = logger;
+            _context = context;  // DbContext'i constructor'dan alıyoruz
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            // Veritabanından anlaşmalar listesini çekiyoruz
+            var anlasmalar = await _context.Anlasmalar.ToListAsync();
+
+            // Listeyi view'e model olarak aktarıyoruz
+            return View(anlasmalar);
         }
 
         public IActionResult Privacy()
