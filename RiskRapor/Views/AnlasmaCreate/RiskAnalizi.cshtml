@@ -1,0 +1,33 @@
+﻿@model IEnumerable<RiskRapor.Models.Anlasmalar>
+
+@{
+    ViewData["Title"] = "Risk Analizi";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Anlaşmaların Risk Analizi</h2>
+
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Firma Adı</th>
+                <th>Anlaşma Tarihi</th>
+                <th>Risk Türü</th>
+                <th>Risk Değeri</th>
+                <th>Risk Skoru</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var anlasma in Model)
+            {
+                <tr>
+                    <td>@anlasma.FirmaAdi</td>
+                    <td>@anlasma.AnlasmaTarihi.ToShortDateString()</td>
+                    <td>@anlasma.RiskTuru</td>
+                    <td>@anlasma.RiskDegeri</td>
+                    <td>@anlasma.RiskSkoru</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
