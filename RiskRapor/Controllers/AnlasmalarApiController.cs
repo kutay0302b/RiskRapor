@@ -1,17 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RiskRapor.Data;
 using RiskRapor.Models;
-using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace RiskRapor.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AnlasmalarController : ControllerBase
+    public class AnlasmalarApiController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
 
-        public AnlasmalarController(ApplicationDbContext context)
+        public AnlasmalarApiController(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -23,19 +24,23 @@ namespace RiskRapor.Controllers
             return await _context.Anlasmalar.ToListAsync();
         }
 
-        // POST: api/Anlasmalar
-        [HttpPost]
-        public async Task<ActionResult<Anlasmalar>> PostAnlasma(Anlasmalar anlasma)
+        // GET: api/Anlasmalar/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Anlasmalar>> GetAnlasmalar(int id)
         {
-            _context.Anlasmalar.Add(anlasma);
-            await _context.SaveChangesAsync();
+            var anlasma = await _context.Anlasmalar.FindAsync(id);
 
-            return CreatedAtAction(nameof(GetAnlasmalar), new { id = anlasma.AnlasmaId }, anlasma);
+            if (anlasma == null)
+            {
+                return NotFound();
+            }
+
+            return anlasma;
         }
 
         // PUT: api/Anlasmalar/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAnlasma(int id, Anlasmalar anlasma)
+        public async Task<IActionResult> PutAnlasmalar(int id, Anlasmalar anlasma)
         {
             if (id != anlasma.AnlasmaId)
             {
@@ -63,9 +68,19 @@ namespace RiskRapor.Controllers
             return NoContent();
         }
 
+        // POST: api/Anlasmalar
+        [HttpPost]
+        public async Task<ActionResult<Anlasmalar>> PostAnlasmalar(Anlasmalar anlasma)
+        {
+            _context.Anlasmalar.Add(anlasma);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetAnlasmalar", new { id = anlasma.AnlasmaId }, anlasma);
+        }
+
         // DELETE: api/Anlasmalar/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAnlasma(int id)
+        public async Task<IActionResult> DeleteAnlasmalar(int id)
         {
             var anlasma = await _context.Anlasmalar.FindAsync(id);
             if (anlasma == null)
@@ -83,7 +98,5 @@ namespace RiskRapor.Controllers
         {
             return _context.Anlasmalar.Any(e => e.AnlasmaId == id);
         }
-
-
     }
 }

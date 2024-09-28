@@ -45,9 +45,9 @@ namespace RiskRapor.Controllers
                 };
 
                 _context.MaliBilgiler.Add(maliBilgi);
-                await _context.SaveChangesAsync();  
+                await _context.SaveChangesAsync();
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Home");
             }
             return View(anlasma);
         }
