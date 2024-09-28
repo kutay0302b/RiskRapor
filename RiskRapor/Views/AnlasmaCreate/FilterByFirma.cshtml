@@ -1,19 +1,47 @@
 ﻿@model IEnumerable<RiskRapor.Models.Anlasmalar>
 
 @{
-    ViewData["Title"] = "Firma Adına Göre Filtrele";
+    ViewData["Title"] = "Firma Adına Göre Filtreleme";
 }
 
 <div class="container mt-5">
     <h2 class="text-center mb-4">Anlaşmaları Filtrele</h2>
 
-    <!-- Firma adı arama formu -->
+    <!-- Arama formu -->
     <form asp-action="FilterByFirma" method="get" class="mb-4">
-        <div class="form-group">
-            <label for="firmaAdi">Firma Adı</label>
-            <input type="text" id="firmaAdi" name="firmaAdi" class="form-control" placeholder="Firma adı yazın..." value="@ViewData["FirmaAdi"]">
+        <div style="display: flex;flex-wrap: wrap;justify-content: space-evenly;align-items: flex-end;">
+            <div class="form-group">
+                <label for="firmaAdi">Firma Adı</label>
+                <input type="text" id="firmaAdi" name="firmaAdi" class="form-control" placeholder="Firma adı yazın..." value="@ViewData["FirmaAdi"]">
+            </div>
+
+            <div class="form-group">
+                <label for="baslangicTarihi">Başlangıç Tarihi</label>
+                <input type="date" id="baslangicTarihi" name="baslangicTarihi" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="bitisTarihi">Bitiş Tarihi</label>
+                <input type="date" id="bitisTarihi" name="bitisTarihi" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="riskTuru">Risk Türü</label>
+                <input type="text" id="riskTuru" name="riskTuru" class="form-control" placeholder="Risk türüne göre ara...">
+            </div>
+
+            <div class="form-group">
+                <label for="minRiskSkoru">Minimum Risk Skoru</label>
+                <input type="number" id="minRiskSkoru" name="minRiskSkoru" class="form-control" step="0.01">
+            </div>
+
+            <div class="form-group">
+                <label for="maxRiskSkoru">Maksimum Risk Skoru</label>
+                <input type="number" id="maxRiskSkoru" name="maxRiskSkoru" class="form-control" step="0.01">
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-3">Ara</button>
         </div>
-        <button type="submit" class="btn btn-primary mt-2">Ara</button>
     </form>
 
     <table class="table table-striped table-hover">
@@ -41,21 +69,20 @@
     </table>
 </div>
 
+<!-- Firma Adı için Autocomplete -->
 <script>
-    // Firma adı için autocomplete işlevi
     $(function () {
         $("#firmaAdi").autocomplete({
             source: function (request, response) {
                 $.ajax({
                     url: '/AnlasmaCreate/GetFirmaAdlari',
-                    data: { term: request.term }, // Kullanıcının yazdığı terimi gönderiyoruz
+                    data: { term: request.term },
                     success: function (data) {
-                        response(data); // Dönen veriyi autocomplete'e gönderiyoruz
+                        response(data);
                     }
                 });
             },
-            minLength: 2 // En az 2 karakter girildiğinde öneriler çıkacak
+            minLength: 2
         });
     });
 </script>
-

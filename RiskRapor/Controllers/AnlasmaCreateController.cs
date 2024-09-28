@@ -37,6 +37,7 @@ namespace RiskRapor.Controllers
             return Json(riskVerileri);
         }
 
+
         public IActionResult Grafik()
         {
             return View();
@@ -147,18 +148,34 @@ namespace RiskRapor.Controllers
         }
 
         // Firma adına göre filtreleme metodu
-        public async Task<IActionResult> FilterByFirma(string firmaAdi)
+        // method güncellendi artık ekranda daha fazla opsiyon mevcut
+        public async Task<IActionResult> FilterByFirma(string firmaAdi, DateTime? baslangicTarihi, DateTime? bitisTarihi, string riskTuru, decimal? minRiskSkoru, decimal? maxRiskSkoru)
         {
             var anlasmalar = from a in _context.Anlasmalar select a;
 
-            // Eğer firma adı boş değilse, firma adına göre filtreleme yap
             if (!string.IsNullOrEmpty(firmaAdi))
             {
                 anlasmalar = anlasmalar.Where(a => a.FirmaAdi.Contains(firmaAdi));
             }
 
+            if (baslangicTarihi.HasValue && bitisTarihi.HasValue)
+            {
+                anlasmalar = anlasmalar.Where(a => a.AnlasmaTarihi >= baslangicTarihi && a.AnlasmaTarihi <= bitisTarihi);
+            }
+
+            if (!string.IsNullOrEmpty(riskTuru))
+            {
+                anlasmalar = anlasmalar.Where(a => a.RiskTuru.Contains(riskTuru));
+            }
+
+            if (minRiskSkoru.HasValue && maxRiskSkoru.HasValue)
+            {
+                anlasmalar = anlasmalar.Where(a => a.RiskSkoru >= minRiskSkoru && a.RiskSkoru <= maxRiskSkoru);
+            }
+
             return View(await anlasmalar.ToListAsync());
         }
+
 
         [HttpGet]
         public async Task<IActionResult> GetFirmaAdlari(string term)
@@ -171,6 +188,7 @@ namespace RiskRapor.Controllers
 
             return Json(firmaAdlari);
         }
+
 
     }
 }
