@@ -21,6 +21,27 @@ namespace RiskRapor.Controllers
             return View();
         }
 
+        public async Task<IActionResult> RiskAnalizi()
+        {
+            var anlasmalar = await _context.Anlasmalar.ToListAsync();
+            return View(anlasmalar); 
+        }
+
+        public async Task<IActionResult> GrafikVerisi()
+        {
+            var anlasmalar = await _context.Anlasmalar.ToListAsync();
+
+            //  firma adı ve risk skorlarını JSON'a çevir 
+            var riskVerileri = anlasmalar.Select(a => new { a.FirmaAdi, a.RiskSkoru }).ToList();
+
+            return Json(riskVerileri);
+        }
+
+        public IActionResult Grafik()
+        {
+            return View();
+        }
+
         // POST: AnlasmaCreate/Create (Yeni Anlaşma Veritabanına Kaydedilir)
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -28,11 +49,18 @@ namespace RiskRapor.Controllers
         {
             if (ModelState.IsValid)
             {
+                //Risk skorunu tabloya eklerken hesaplatıyoruz
+                anlasma.RiskSkoru = HesaplaRiskSkoru(anlasma.RiskDegeri);
                 _context.Add(anlasma);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index", "Home");
             }
             return View(anlasma);
+        }
+
+        private decimal HesaplaRiskSkoru(decimal riskDegeri)
+        {
+            return riskDegeri * 10;
         }
 
         // GET: AnlasmaCreate/Edit/5 (ID'ye göre düzenleme formunu gösterir)
@@ -117,5 +145,32 @@ namespace RiskRapor.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("Index", "Home");
         }
+
+        // Firma adına göre filtreleme metodu
+        public async Task<IActionResult> FilterByFirma(string firmaAdi)
+        {
+            var anlasmalar = from a in _context.Anlasmalar select a;
+
+            // Eğer firma adı boş değilse, firma adına göre filtreleme yap
+            if (!string.IsNullOrEmpty(firmaAdi))
+            {
+                anlasmalar = anlasmalar.Where(a => a.FirmaAdi.Contains(firmaAdi));
+            }
+
+            return View(await anlasmalar.ToListAsync());
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetFirmaAdlari(string term)
+        {
+            var firmaAdlari = await _context.Anlasmalar
+                .Where(a => a.FirmaAdi.Contains(term))
+                .Select(a => a.FirmaAdi)
+                .Distinct()
+                .ToListAsync();
+
+            return Json(firmaAdlari);
+        }
+
     }
 }

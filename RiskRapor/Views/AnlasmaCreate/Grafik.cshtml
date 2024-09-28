@@ -1,0 +1,40 @@
+﻿@{
+    ViewData["Title"] = "Risk Skoru Grafiği";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Anlaşmaların Risk Skoru Grafiği</h2>
+
+    <canvas id="riskChart" width="400" height="200"></canvas>
+
+    <script>
+        fetch('/AnlasmaCreate/GrafikVerisi') 
+            .then(response => response.json())
+            .then(data => {
+                const labels = data.map(anlasma => anlasma.firmaAdi);
+                const riskSkorlari = data.map(anlasma => anlasma.riskSkoru);
+
+                const ctx = document.getElementById('riskChart').getContext('2d');
+                const riskChart = new Chart(ctx, {
+                    type: 'bar', 
+                    data: {
+                        labels: labels, // Firma adları
+                        datasets: [{
+                            label: 'Risk Skoru',
+                            data: riskSkorlari, // Risk skorları
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            });
+    </script>
+</div>
