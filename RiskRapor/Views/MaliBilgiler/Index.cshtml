@@ -1,0 +1,28 @@
+﻿@model IEnumerable<RiskRapor.Models.MaliBilgiler>
+
+<h2>Mali Bilgiler Listesi</h2>
+
+<table class="table table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Anlaşma</th>
+            <th>Gelir</th>
+            <th>Gider</th>
+            <th>Kar</th>
+            <th>Vergi Oranı</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var maliBilgi in Model)
+        {
+            <tr>
+                <td>@maliBilgi.Anlasma.FirmaAdi</td>
+                <td>@maliBilgi.Gelir</td>
+                <td>@maliBilgi.Gider</td>
+                <td>@maliBilgi.Kar</td>
+                <td>@maliBilgi.VergiOrani %</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

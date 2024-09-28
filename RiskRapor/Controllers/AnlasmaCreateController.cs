@@ -21,6 +21,45 @@ namespace RiskRapor.Controllers
             return View();
         }
 
+
+        //POST: AnlasmaCreate/Create (Yeni Anlaşma Veritabanına Kaydedilir)
+        //Bir anlşama eklendiğinde otomatik mali bilgi eklenecek
+        //tabloda işlem yapmak daha kolay olsun diye yapılan bir yöntemdir.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("AnlasmaId,FirmaAdi,AnlasmaTarihi,RiskTuru,RiskDegeri,RiskSkoru")] Anlasmalar anlasma)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(anlasma);
+                await _context.SaveChangesAsync();
+
+                // Yeni oluşturulan anlaşmaya otomatik mali bilgi ekleyelim
+                var maliBilgi = new MaliBilgiler
+                {
+                    AnlasmaId = anlasma.AnlasmaId,
+                    Gelir = GetRandomDecimal(50000, 150000),   
+                    Gider = GetRandomDecimal(20000, 100000), 
+                    Kar = GetRandomDecimal(10000, 50000), 
+                    VergiOrani = GetRandomDecimal(15, 25) 
+                };
+
+                _context.MaliBilgiler.Add(maliBilgi);
+                await _context.SaveChangesAsync();  
+
+                return RedirectToAction(nameof(Index));
+            }
+            return View(anlasma);
+        }
+
+       
+        private decimal GetRandomDecimal(decimal minValue, decimal maxValue)
+        {
+            Random random = new Random();
+            return Math.Round((decimal)(random.NextDouble() * (double)(maxValue - minValue) + (double)minValue), 2);
+        }
+
+
         public async Task<IActionResult> RiskAnalizi()
         {
             var anlasmalar = await _context.Anlasmalar.ToListAsync();
@@ -74,21 +113,21 @@ namespace RiskRapor.Controllers
 
       
 
-        // POST: AnlasmaCreate/Create (Yeni Anlaşma Veritabanına Kaydedilir)
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FirmaAdi,AnlasmaTarihi,RiskTuru,RiskDegeri")] Anlasmalar anlasma)
-        {
-            if (ModelState.IsValid)
-            {
-                //Risk skorunu tabloya eklerken hesaplatıyoruz
-                anlasma.RiskSkoru = HesaplaRiskSkoru(anlasma.RiskDegeri);
-                _context.Add(anlasma);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Index", "Home");
-            }
-            return View(anlasma);
-        }
+        //// POST: AnlasmaCreate/Create (Yeni Anlaşma Veritabanına Kaydedilir)
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create([Bind("FirmaAdi,AnlasmaTarihi,RiskTuru,RiskDegeri")] Anlasmalar anlasma)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        //Risk skorunu tabloya eklerken hesaplatıyoruz
+        //        anlasma.RiskSkoru = HesaplaRiskSkoru(anlasma.RiskDegeri);
+        //        _context.Add(anlasma);
+        //        await _context.SaveChangesAsync();
+        //        return RedirectToAction("Index", "Home");
+        //    }
+        //    return View(anlasma);
+        //}
 
         private decimal HesaplaRiskSkoru(decimal riskDegeri)
         {

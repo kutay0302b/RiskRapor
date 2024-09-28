@@ -16,8 +16,9 @@ namespace RiskRapor.Models
         [Column(TypeName = "decimal(18, 2)")]
         public decimal RiskDegeri { get; set; }
 
-        // Yeni risk alanı
         [Column(TypeName = "decimal(18, 2)")]
         public decimal RiskSkoru { get; set; }
+
+        public ICollection<MaliBilgiler>? MaliBilgiler { get; set; }
     }
 }
