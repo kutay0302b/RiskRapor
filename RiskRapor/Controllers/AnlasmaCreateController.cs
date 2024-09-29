@@ -34,7 +34,6 @@ namespace RiskRapor.Controllers
                 _context.Add(anlasma);
                 await _context.SaveChangesAsync();
 
-                // Yeni oluşturulan anlaşmaya otomatik mali bilgi ekleyelim
                 var maliBilgi = new MaliBilgiler
                 {
                     AnlasmaId = anlasma.AnlasmaId,
@@ -109,28 +108,6 @@ namespace RiskRapor.Controllers
             return Json(riskSkoruVerileri);
         }
 
-
-
-
-
-
-
-
-        //// POST: AnlasmaCreate/Create (Yeni Anlaşma Veritabanına Kaydedilir)
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("FirmaAdi,AnlasmaTarihi,RiskTuru,RiskDegeri")] Anlasmalar anlasma)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        //Risk skorunu tabloya eklerken hesaplatıyoruz
-        //        anlasma.RiskSkoru = HesaplaRiskSkoru(anlasma.RiskDegeri);
-        //        _context.Add(anlasma);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction("Index", "Home");
-        //    }
-        //    return View(anlasma);
-        //}
 
         private decimal HesaplaRiskSkoru(decimal riskDegeri)
         {
