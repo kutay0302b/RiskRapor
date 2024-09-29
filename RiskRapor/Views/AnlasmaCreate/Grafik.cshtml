@@ -35,15 +35,15 @@
         fetch('/AnlasmaCreate/RiskSkoruGrafik')
             .then(response => response.json())
             .then(data => {
-                console.log(data);  
-                data.forEach(d => console.log(d.anlasmaTarihi));  
+                console.log(data);
+                data.forEach(d => console.log(d.anlasmaTarihi));
 
                 const labels = data.map(d => {
                     let date = new Date(d.anlasmaTarihi);
-                    return date.toLocaleDateString(); 
+                    return date.toLocaleDateString();
                 });
 
-                const values = data.map(d => d.ortalamaRiskSkoru); 
+                const values = data.map(d => d.ortalamaRiskSkoru);
 
                 const ctx = document.getElementById('riskSkoruChart').getContext('2d');
                 const riskSkoruChart = new Chart(ctx, {
@@ -63,7 +63,20 @@
 
 
 
+        const socket = new WebSocket('ws://localhost:7235/ws');
 
+        socket.onopen = function (event) {
+            console.log("WebSocket bağlantısı açıldı.");
+            socket.send("bağlandı");
+        };
+
+        socket.onmessage = function (event) {
+            console.log("Sunucudan mesaj: " + event.data);
+        };
+
+        socket.onclose = function (event) {
+            console.log("WebSocket bağlantısı kapandı.");
+        };
 
 
 

@@ -4,6 +4,7 @@ using DinkToPdf.Contracts;
 using DinkToPdf;
 using OfficeOpenXml;
 using Microsoft.Extensions.DependencyInjection;
+using RiskRapor;
 
 //using RiskRapor.Data.Repositories;
 
@@ -28,9 +29,33 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
-
+//websocket implementasyonu
+app.UseWebSockets();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path == "/ws")
+    {
+        if (context.WebSockets.IsWebSocketRequest)
+        {
+            var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+            var handler = new WebSocketHandler();
+            await handler.Handle(context, webSocket);
+        }
+        else
+        {
+            context.Response.StatusCode = 400;
+        }
+    }
+    else
+    {
+        await next();
+    }
+});
+
 
 app.UseRouting();
 
