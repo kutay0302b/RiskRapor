@@ -6,14 +6,13 @@
 
 <div class="container mt-4">
     <h2 class="text-center mb-4">Anlaşmalar Listesi</h2>
-
     <table class="table table-striped table-hover">
         <thead class="table-dark">
             <tr>
-                <th>Firma Adı</th>
-                <th>Anlaşma Tarihi</th>
-                <th>Risk Türü</th>
-                <th>Risk Değeri</th>
+                <th onclick="sortTable(0)">Firma Adı</th>
+                <th onclick="sortTable(1)">Anlaşma Tarihi</th>
+                <th onclick="sortTable(2)">Risk Türü</th>
+                <th onclick="sortTable(3)">Risk Değeri</th>
                 <th>İşlemler</th>
             </tr>
         </thead>
@@ -28,12 +27,12 @@
                     <td>
                         <a href="/AnlasmaCreate/Edit/@anlasma.AnlasmaId" class="btn btn-primary">Düzenle</a>
                         <a href="/AnlasmaCreate/Delete/@anlasma.AnlasmaId" class="btn btn-danger">Sil</a>
-
                     </td>
                 </tr>
             }
         </tbody>
     </table>
+
 
     <a href="/AnlasmaCreate/Create" class="btn btn-primary mt-3">Yeni Anlaşma Ekle</a>
     <a href="/AnlasmaCreate/RiskAnalizi" class="btn btn-primary mt-3">Risk Analizi Görüntüle</a>
@@ -52,14 +51,57 @@
             let tableBody = document.querySelector('#anlasmalar-table tbody');
             data.forEach(anlasma => {
                 let row = `
-                    <tr>
-                        <td>${anlasma.firmaAdi}</td>
-                        <td>${new Date(anlasma.anlasmaTarihi).toLocaleDateString()}</td>
-                        <td>${anlasma.riskTuru}</td>
-                        <td>${anlasma.riskDegeri}</td>
-                    </tr>`;
+                            <tr>
+                                <td>${anlasma.firmaAdi}</td>
+                                <td>${new Date(anlasma.anlasmaTarihi).toLocaleDateString()}</td>
+                                <td>${anlasma.riskTuru}</td>
+                                <td>${anlasma.riskDegeri}</td>
+                            </tr>`;
                 tableBody.innerHTML += row;
             });
         });
 
+
+    $(document).ready(function () {
+        $('.table').DataTable();
+    });
+
+    function sortTable(columnIndex) {
+        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        table = document.querySelector(".table");
+        switching = true;
+        dir = "asc";
+
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("TD")[columnIndex];
+                y = rows[i + 1].getElementsByTagName("TD")[columnIndex];
+
+                if (dir === "asc") {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                } else if (dir === "desc") {
+                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                switchcount++;
+            } else {
+                if (switchcount === 0 && dir === "asc") {
+                    dir = "desc";
+                    switching = true;
+                }
+            }
+        }
+    }
 </script>
