@@ -28,7 +28,11 @@ namespace RiskRapor.Controllers
 
         // GET: api/MaliBilgiler/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<MaliBilgiler>> GetMaliBilgiler(int id)
+        public async Task<ActionResult<MaliBilgilerDto>> GetMaliBilgi(int id)
+        {
+            var maliBilgi = await _context.MaliBilgiler
+                                          .Where(m => m.Id == id)
+                                          .Select(m => new MaliBilgilerDto
         {
             var maliBilgi = await _context.MaliBilgiler.FindAsync(id);
 
