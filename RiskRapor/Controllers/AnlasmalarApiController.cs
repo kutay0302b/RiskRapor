@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RiskRapor.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/Anlasmalar")]
     [ApiController]
     public class AnlasmalarApiController : ControllerBase
     {

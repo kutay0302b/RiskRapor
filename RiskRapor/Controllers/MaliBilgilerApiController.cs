@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RiskRapor.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/MaliBilgiler")]
     [ApiController]
     public class MaliBilgilerApiController : ControllerBase
     {
@@ -33,8 +33,13 @@ namespace RiskRapor.Controllers
             var maliBilgi = await _context.MaliBilgiler
                                           .Where(m => m.Id == id)
                                           .Select(m => new MaliBilgilerDto
-        {
-            var maliBilgi = await _context.MaliBilgiler.FindAsync(id);
+                                          {
+                                              Id = m.Id,
+                                              Gelir = m.Gelir,
+                                              Gider = m.Gider,
+                                              Kar = m.Kar,
+                                              VergiOrani = m.VergiOrani
+                                          }).FirstOrDefaultAsync();
 
             if (maliBilgi == null)
             {
